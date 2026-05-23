@@ -16,7 +16,7 @@
 
 // static constant members
 const std::string GeoObject::geometricobject  = "geometricobject.txt"; // 3D geometric object file containing the densities, 50x50x50
-const std::string GeoObject::dataDir = "data/"; // directory for object references dimensions and masses
+const std::string GeoObject::dataDir = "../data/"; // directory for object references dimensions and masses
 const std::string GeoObject::geometricrefdims = "geometricrefdim.txt"; // row/column dimensions of references
 const double GeoObject::pi = 3.14159265358979;
 
@@ -43,6 +43,11 @@ const char* geometricObjects[] = {
 	  "rose4leafrevolution",
 	  "rose4leafrevolutionsolid"
 };
+
+GeoObject::GeoObject() {
+	noiseLevel = 0;
+	shift = false;
+}
 
 // add noise to the geometric object's density and shift the location of the geometric object
 void GeoObject::addNoiseShift()
@@ -901,7 +906,7 @@ void GeoObject::createConeSolid()
 						if (z >= 0 && z <= k) {
 							double sumsq = double(x*x + y*y + (z-k/2)*(z-k/2));
 							// center is the most dense, decreasing as you move away from center
-							density = char(black * (1.0 - sqrt(sumsq/norm)));
+							density2 = char(black * (1.0 - sqrt(sumsq/norm)));
 							density[k1c-z][x+x1][y+y1] = density2;
 						}
 					}
@@ -912,7 +917,7 @@ void GeoObject::createConeSolid()
 
 	//Miscellaneous problems
 	for (int z = -c / 2; z <= c/2; z++) {
-		int int x = 0;
+		int x = 0;
 		int y = 0;
 		double sumsq = double(x*x + y*y + z*z);
 		char density2 = char(black * (1.0 - sqrt(sumsq/norm)));
@@ -1065,31 +1070,33 @@ void GeoObject::createGeometricReferences()
 {
 
 	// alias for a void function with no arguments
-	using Geo = void(*)();
+    using Geo = void(GeoObject::*)();
+	// typedef void (*Geo)();
+
 
 	// functions that construct the geometric objects
 	// do not change order, synchronized with geometricObjects[]
 	Geo geofunc[] = {
-	    GeoObject::createEllipsoid,
-		GeoObject::createEllipsoidSolid,
-		GeoObject::createPlane,
-		GeoObject::createParaboloid,
-		GeoObject::createParaboloidSolid,
-		GeoObject::createCube,
-		GeoObject::createCone,
-		GeoObject::createConeSolid,
-		GeoObject::createBox,
-		GeoObject::createHyperbolicParaboloid,
-		GeoObject::createCylinder,
-		GeoObject::createCylinderSolid,
-		GeoObject::createPotentialWell,
-		GeoObject::createCardioidRevolution,
-		GeoObject::createCardioidRevolutionSolid,
-		GeoObject::createLemniscateRevolution,
-		GeoObject::createLemniscateRevolutionSolid,
-		GeoObject::createRose4LeafRevolution,
-		GeoObject::createRose4LeafRevolutionSolid,
-		GeoObject::createGeometricReferences,
+	    &GeoObject::createEllipsoid,
+		&GeoObject::createEllipsoidSolid,
+		&GeoObject::createPlane,
+		&GeoObject::createParaboloid,
+		&GeoObject::createParaboloidSolid,
+		&GeoObject::createCube,
+		&GeoObject::createCone,
+		&GeoObject::createConeSolid,
+		&GeoObject::createBox,
+		&GeoObject::createHyperbolicParaboloid,
+		&GeoObject::createCylinder,
+		&GeoObject::createCylinderSolid,
+		&GeoObject::createPotentialWell,
+		&GeoObject::createCardioidRevolution,
+		&GeoObject::createCardioidRevolutionSolid,
+		&GeoObject::createLemniscateRevolution,
+		&GeoObject::createLemniscateRevolutionSolid,
+		&GeoObject::createRose4LeafRevolution,
+		&GeoObject::createRose4LeafRevolutionSolid,
+		&GeoObject::createGeometricReferences
 	};
 
 	// create geometric object reference dimension file
@@ -1108,9 +1115,9 @@ void GeoObject::createGeometricReferences()
 		std::fstream fclass;
 		fclass.open((GeoObject::dataDir + dim1 + ".txt").c_str(), std::fstream::out);
 		if (!fclass.is_open()) {
-				std::cout << "createGeometricReferences: cannot open " << dim1 + ".txt" << std::endl;
+				std::cout << std::string("createGeometricReferences: cannot open ") + dim1 + ".txt" << std::endl;
 				fclass.close();
-				throw std::runtime_error("addNoiseShift:  cannot open " + dim1 + ".txt");
+				throw std::runtime_error(std::string("addNoiseShift:  cannot open ") + dim1 + ".txt");
 		}
 
 		// clear the previous densities
@@ -1123,7 +1130,7 @@ void GeoObject::createGeometricReferences()
 		}
 
 		// construct this class but don't save to disk
-		geofunc[i]();
+		(this->*geofunc[i])();
 
 
 		int rowFirst = planeDim;
@@ -1150,7 +1157,6 @@ void GeoObject::createGeometricReferences()
 					sum += int(density[plane][row][col]);
 				}
 				if (sum > 0) {
-					int rowFirst = row;
 					break;
 				}
 			}
@@ -1437,70 +1443,68 @@ void GeoObject::createGeometricReferences()
 // create a geometric 3D object using its densities
 void GeoObject::CreateObject(int geometricObject, int noiseLevel, bool shift)
 {
-	// create a GeoObject instance
-	GeoObject geo(noiseLevel, shift);
 
 	// determine the geometric surface/solid
 	switch (geometricObject) {
 	case 0:
-		geo.createPlane();
+		createPlane();
 		break;
 	case 1:
-		geo.createCube();
+		createCube();
 		break;
 	case 2:
-		geo.createEllipsoid();
+		createEllipsoid();
 		break;
 	case 3:
-		geo.createEllipsoidSolid();
+		createEllipsoidSolid();
 		break;
 	case 4:
-		geo.createParaboloid();
+		createParaboloid();
 		break;
 	case 5:
-		geo.createParaboloidSolid();
+		createParaboloidSolid();
 		break;
 	case 6:
-		geo.createCone();
+		createCone();
 		break;
 	case 7:
-		geo.createConeSolid();
+		createConeSolid();
 		break;
 	case 8:
-		geo.createBox();
+		createBox();
 		break;
 	case 9:
-		geo.createHyperbolicParaboloid();
+		createHyperbolicParaboloid();
 		break;
 	case 10:
-		geo.createCylinder();
+		createCylinder();
 		break;
 	case 11:
-		geo.createCylinderSolid();
+		createCylinderSolid();
 		break;
 	case 12:
-		geo.createPotentialWell();
+		createPotentialWell();
 		break;
 	case 13:
-		geo.createCardioidRevolution();
+		createCardioidRevolution();
 		break;
 	case 14:
-		geo.createCardioidRevolutionSolid();
+		createCardioidRevolutionSolid();
 		break;
 	case 15:
-		geo.createLemniscateRevolution();
+		createLemniscateRevolution();
 		break;
 	case 16:
-		geo.createLemniscateRevolutionSolid();
+		createLemniscateRevolutionSolid();
 		break;
 	case 17:
-		geo.createRose4LeafRevolution();
+		createRose4LeafRevolution();
 		break;
 	case 18:
-		geo.createRose4LeafRevolutionSolid();
+		createRose4LeafRevolutionSolid();
 		break;
 	case 19:
-		geo.createGeometricReferences();
+		createGeometricReferences();
 		break;
 	default:
 		std::cout << "create geometric object unknown case" << std::endl;

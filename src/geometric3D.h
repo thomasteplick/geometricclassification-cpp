@@ -16,9 +16,7 @@ class GeoObject
 {
 	int noiseLevel;
 	bool shift;
-    static const int planeDim=50;
     static const double pi;
-	char density[planeDim][planeDim][planeDim];
 
 	// Geometric object creators
 	void addNoiseShift();
@@ -43,18 +41,22 @@ class GeoObject
 	void createParaboloidSolid();
 	void createGeometricReferences();
 public:
+    static const int planeDim=50;
     static const std::string geometricobject;
     static const std::string dataDir;
     static const std::string geometricrefdims;
 
-    GeoObject(int nl, bool shift) : noiseLevel(nl), shift(shift){}
+    GeoObject();
     ~GeoObject() = default;
     GeoObject(const GeoObject& geoObj) = delete;
     GeoObject& operator=(const GeoObject& geoObj) = delete;
-    GeoObject(GeoObject&& geoObject) = delete;
+    GeoObject(GeoObject&& geoObj) = delete;
     GeoObject& operator=(GeoObject&& geoObject) = delete;
 
     void CreateObject(int geometricObject, int noiseLevel, bool shift);
+
+private:
+	char density[planeDim][planeDim][planeDim];
 
 };
 
