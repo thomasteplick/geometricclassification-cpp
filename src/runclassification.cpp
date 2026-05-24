@@ -55,8 +55,8 @@ double Geometric::searchPlaneReferences(int cls, int axis, int plane, int refMas
 	// get the bounds (number of rows and columns) for this refMass plane
 	int nrows = geoRefDims[cls][axis][refMassPlane].nrows;
 	int ncols = geoRefDims[cls][axis][refMassPlane].ncols;
-	int rowShifts = planeDim - nrows;
-	int colShifts = planeDim - ncols;
+	int rowShifts = PlaneMass::PlaneMass::planeDim - nrows;
+	int colShifts = PlaneMass::planeDim - ncols;
 
 	const int nsections = 4;
 
@@ -90,7 +90,7 @@ double Geometric::searchPlaneReferences(int cls, int axis, int plane, int refMas
 						rowStart: 0,
 						rowEnd:   i,
 						colStart: 0,
-						colEnd:   planeDim,
+						colEnd:   PlaneMass::planeDim,
 					},
 					{
 						rowStart: i,
@@ -102,13 +102,13 @@ double Geometric::searchPlaneReferences(int cls, int axis, int plane, int refMas
 						rowStart: i,
 						rowEnd:   i + nrows,
 						colStart: j + ncols,
-						colEnd:   planeDim,
+						colEnd:   PlaneMass::planeDim,
 					},
 					{
 						rowStart: i + nrows,
-						rowEnd:   planeDim,
+						rowEnd:   PlaneMass::planeDim,
 						colStart: 0,
-						colEnd:   planeDim,
+						colEnd:   PlaneMass::planeDim,
 					},
 				};
 
@@ -175,7 +175,7 @@ double Geometric::searchPlaneReferences(int cls, int axis, int plane, int refMas
 						rowStart: 0,
 						rowEnd:   i,
 						colStart: 0,
-						colEnd:   planeDim,
+						colEnd:   PlaneMass::planeDim,
 					},
 					{
 						rowStart: i,
@@ -187,13 +187,13 @@ double Geometric::searchPlaneReferences(int cls, int axis, int plane, int refMas
 						rowStart: i,
 						rowEnd:   i + nrows,
 						colStart: j + ncols,
-						colEnd:   planeDim,
+						colEnd:   PlaneMass::planeDim,
 					},
 					{
 						rowStart: i + nrows,
-						rowEnd:   planeDim,
+						rowEnd:   PlaneMass::planeDim,
 						colStart: 0,
-						colEnd:   planeDim,
+						colEnd:   PlaneMass::planeDim,
 					},
 				};
 
@@ -260,7 +260,7 @@ double Geometric::searchPlaneReferences(int cls, int axis, int plane, int refMas
 						rowStart: 0,
 						rowEnd:   i,
 						colStart: 0,
-						colEnd:   planeDim,
+						colEnd:   PlaneMass::planeDim,
 					},
 					{
 						rowStart: i,
@@ -272,13 +272,13 @@ double Geometric::searchPlaneReferences(int cls, int axis, int plane, int refMas
 						rowStart: i,
 						rowEnd:   i + nrows,
 						colStart: j + ncols,
-						colEnd:   planeDim,
+						colEnd:   PlaneMass::planeDim,
 					},
 					{
 						rowStart: i + nrows,
-						rowEnd:   planeDim,
+						rowEnd:   PlaneMass::planeDim,
 						colStart: 0,
-						colEnd:   planeDim,
+						colEnd:   PlaneMass::planeDim,
 					}
 				};
 
@@ -335,7 +335,7 @@ double Geometric::getPlaneMassError(int cls, int axis, int plane)
 		to find minimum square error.
 	*/
 	double minSqErr = std::numeric_limits<double>::max();
-	for (int refMassPlane = 0; refMassPlane < planeDim; refMassPlane++) {
+	for (int refMassPlane = 0; refMassPlane < PlaneMass::planeDim; refMassPlane++) {
 		double sqErr = searchPlaneReferences(cls, axis, plane, refMassPlane);
 		if (sqErr < minSqErr) {
 			minSqErr = sqErr;
@@ -350,7 +350,7 @@ double Geometric::getAxisMassError(int cls, int axis)
 	double minSqErr = std::numeric_limits<double>::max();
 	// loop over planes and get plane mass errors
 	// sum the plane square errors
-	for (int plane = 0; plane < planeDim; plane++) {
+	for (int plane = 0; plane < PlaneMass::planeDim; plane++) {
 		// find the minimum square error for assigned plane
 		minSqErr += getPlaneMassError(cls, axis, plane);
 	}
@@ -391,14 +391,15 @@ Geometric::Geometric()
     totalCorrect = 0;
     totalCount = 0;
 
-    // Create Geometric Object
-    GeoObject geobj;
-
 	// Determine if the files containing the reference dimensions exist
 	std::fstream fdim;
 	fdim.open((dataDir+geometricrefdims).c_str(), std::fstream::in);
 
 	if (!fdim.is_open()) {
+
+	    // Create Geometric Object
+	    GeoObject geobj;
+
 		// create geometric references
 		geobj.CreateObject(19, 0, false);
 	}
@@ -407,7 +408,7 @@ Geometric::Geometric()
 	}
 
 	// read in the geometric reference dimensions in order:
-	// [class][axis][plane]planeDim
+	// [class][axis][plane]PlaneMass::planeDim
 	// class 0, 1, ..., classes-1
 	// axis 0, 1, 2
 	// plane0 nrows,ncols
@@ -415,9 +416,9 @@ Geometric::Geometric()
 	// plane49 nrows,ncols
 	int nrows = 0;
 	int ncols = 0;
-	for (int i = 0; i < GeoObject::planeDim; i++) {
-		for (int j = 0; j < GeoObject::planeDim; j++) {
-			for (int k = 0; k < GeoObject::planeDim; k++) {
+	for (int i = 0; i < PlaneMass::planeDim; i++) {
+		for (int j = 0; j < PlaneMass::planeDim; j++) {
+			for (int k = 0; k < PlaneMass::planeDim; k++) {
 				fdim >> nrows >> ncols;
 				geoRefDims[i][j][k] = PlaneDim{nrows: nrows, ncols: ncols};
 			}
@@ -430,6 +431,9 @@ Geometric::Geometric()
 void Geometric::classifyGeometric()
 {
 
+    // Create Geometric Object
+    GeoObject geobj;
+
 	// loop over the number of samples
 	for (int sample = 0; sample < nsamples; sample++) {
 		// min sq mass error
@@ -438,9 +442,6 @@ void Geometric::classifyGeometric()
 		int minClass = 0;
 		// generate a random geometric object with noise level and shift using geoRefDims
 		int ngeometricObj = std::rand()%(classes);
-
-	    // Create Geometric Object
-	    GeoObject geobj;
 
 		geobj.CreateObject(ngeometricObj, noiseLevel, shift);
 
@@ -453,9 +454,9 @@ void Geometric::classifyGeometric()
 		}
 
 		// Read the geometric object file containing the densities
-		for (int i = 0; i < planeDim; i++) {
-			for (int j = 0; j < planeDim; j++) {
-				for (int k = 0; k < planeDim; k++) {
+		for (int i = 0; i < PlaneMass::planeDim; i++) {
+			for (int j = 0; j < PlaneMass::planeDim; j++) {
+				for (int k = 0; k < PlaneMass::planeDim; k++) {
 					fgeometric >> density[i][j][k];
 				}
 			}
@@ -463,7 +464,7 @@ void Geometric::classifyGeometric()
 		fgeometric.close();
 
 		// loop over geometric references and open one at a time
-		for (int cls = 0; cls < nclasses; cls++) {
+		for (int cls = 0; cls < Stats::nclasses; cls++) {
 			// read geometric reference mass sums into memory for this class reference only
 			std::fstream fgeoref;
 			fgeoref.open((dataDir + geometricObjects[cls] + ".txt").c_str(), std::fstream::in);
@@ -472,7 +473,7 @@ void Geometric::classifyGeometric()
 				throw std::runtime_error(std::string("cannot open file ") + geometricObjects[cls] + ".txt");
 			}
 			for (int axes = 0; axes < naxes; axes++) {
-				for (int plane = 0; plane < planeDim; plane++) {
+				for (int plane = 0; plane < PlaneMass::planeDim; plane++) {
 					int nrows = geoRefDims[cls][axes][plane].nrows;
 					for (int m = 0; m < nrows; m++) {
 						fgeoref >> geoRefMass[axes][plane].row[m];
@@ -516,7 +517,7 @@ void Geometric::tabulateTestResults()
 	totalCount = 0;
 	totalCorrect = 0;
 	// tabulate TestResults
-	for (int i = 0; i < nclasses; i++) {
+	for (int i = 0; i < Stats::nclasses; i++) {
 		totalCount += statistics.classCount[i];
 		totalCorrect += statistics.correct[i];
 		if (statistics.classCount[i] > 0) {
@@ -557,7 +558,7 @@ void Geometric::displayTestResults()
 	std::cout << "|======================================================|" << std::endl;
 	std::cout << "|Class  |Geometric                 |Count  |Correct (%)|" << std::endl;
 	std::cout << "|=======|==========================|=======|===========|" << std::endl;
-	for (int cls = 0; cls < nclasses; cls++) { std::cout
+	for (int cls = 0; cls < Stats::nclasses; cls++) { std::cout
 				<< std::setw(w1) << std::ios_base::left << cls << '|'
 				<< std::setw(w2) << std::ios_base::left << geometricObjects[cls] << '|'
 				<< std::setw(w1) << std::ios_base::left << statistics.classCount[cls] << '|'
@@ -578,12 +579,20 @@ void handleGeometricClassification()
 {
 	// initialize random number generator
 	std::srand(std::time(0));
+
+    // show start time
+    time_t rawtime;
+    struct tm * timeinfo;
+
+    time (&rawtime);
+    timeinfo = localtime (&rawtime);
+    std::cout << std::string("Start local time and date: ") << std::string(asctime(timeinfo)) << std::endl;
+
 	// Create geometric3D instance
 	// Create geometric references if they don't exist by calling geometric3D member, create a Geometric object
 	// Construct a Geometric instance for classification, pass number of samples and noise level
     // Create Geometric
     Geometric geo;
-    GeoObject geoO;
 
 	// classify the geometric object samples
     geo.classifyGeometric();
@@ -593,6 +602,11 @@ void handleGeometricClassification()
 
 	// display the test results in tabular form
     geo.displayTestResults();
+
+    // show finish time
+    time (&rawtime);
+    timeinfo = localtime (&rawtime);
+    std::cout << std::string("Finish local time and date: ") << std::string(asctime(timeinfo)) << std::endl;
 }
 
 #ifdef TEST_DISPLAY
@@ -602,7 +616,7 @@ void test_display()
     // Create Geometric
     Geometric geo;
 
-    double mean = double(geo.nsamples)/double(Geometric::nclasses);
+    double mean = double(geo.nsamples)/double(Stats::nclasses);
     int sign = 1.0;
     double k1 = .05;
     double k2 = .95;
@@ -610,15 +624,15 @@ void test_display()
 
 	std::cout << "Testing Display" << std::endl;
 	// fill in statistics
-	for (int i = 0; i < Geometric::nclasses-1; i++) {
+	for (int i = 0; i < Stats::nclasses-1; i++) {
 		Geometric::statistics.classCount[i] = int(mean*(1.0 + sign*k1));
 		Geometric::statistics.correct[i] = int(k2*Geometric::statistics.classCount[i]);
 		sign *= -1.0;
 		count += Geometric::statistics.classCount[i];
 	}
-	Geometric::statistics.classCount[Geometric::nclasses-1] = geo.nsamples - count;
-	Geometric::statistics.correct[Geometric::nclasses-1] =
-			int(k2*Geometric::statistics.classCount[Geometric::nclasses-1]);
+	Geometric::statistics.classCount[Stats::nclasses-1] = geo.nsamples - count;
+	Geometric::statistics.correct[Stats::nclasses-1] =
+			int(k2*Geometric::statistics.classCount[Stats::nclasses-1]);
 
 	// tabulate
 	geo.tabulateTestResults();

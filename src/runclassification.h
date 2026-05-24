@@ -10,12 +10,6 @@
 
 #include <string>
 
-// non-zero masses in a plane in the two coordinates
-struct PlaneDim
-{
-	int nrows;
-	int ncols;
-};
 
 // test statistics that are tabulated in HTML
 struct Results {
@@ -25,12 +19,15 @@ struct Results {
 	int count; // number of training examples in the class
 };
 
-const int planeDim = 50;
-const int nclasses = 19;
+struct PlaneDim {
+	int nrows;
+	int ncols;
+};
 
 // masses for a plane in the two coordinates
 struct PlaneMass
 {
+	static const int planeDim = 50;
 	int row[planeDim];
 	int col[planeDim];
 };
@@ -38,6 +35,7 @@ struct PlaneMass
 // classification results
 struct Stats
 {
+	static const int nclasses = 19;
 	int correct[nclasses]; // % correct classifcation
 	int classCount[nclasses]; // #samples in each class
 };
@@ -50,17 +48,14 @@ class Geometric
 	Stats statistics;
 	int totalCount;    // total test samples
 	int totalCorrect; // total correct classification
-	char density[planeDim][planeDim][planeDim]; // geometric object 3D densities
-	PlaneDim geoRefDims[nclasses][nclasses][planeDim]; // [class][axis][plane]
-	double pcError[nclasses];      // classification percent error
-	Results testResults[nclasses]; // tabulated statistics of testing
+	char density[PlaneMass::planeDim][PlaneMass::planeDim][PlaneMass::planeDim]; // geometric object 3D densities
+	double pcError[Stats::nclasses];      // classification percent error
+	Results testResults[Stats::nclasses]; // tabulated statistics of testing
 
 	double searchPlaneReferences(int cl, int axis, int plane, int refMassPlane);
 	double getPlaneMassError(int cls, int axis, int plane);
 	double getAxisMassError(int cls, int axis);
 public:
-	//static const int planeDim = 50; // number of cells in a plane in x and y
-	//static const int nclasses = 19;  // number of classes or geometric objects
 	static const int naxes = 3;     // number of axes in Cartesian coordinate system
 	static const std::string addr;   // http server listen address
 	static const std::string geometricobject; // 3D geometric object file containing the densities, 50x50x50
@@ -88,7 +83,8 @@ public:
 #endif
 
 private:
-	PlaneMass geoRefMass[naxes][planeDim];  // [axis][plane]
+	PlaneMass geoRefMass[naxes][PlaneMass::planeDim];  // [axis][plane]
+	PlaneDim geoRefDims[Stats::nclasses][naxes][PlaneMass::planeDim]; // [class][axis][plane]
 };
 
 #endif /* GEOMETRICCLASSIFICATION_H_ */

@@ -44,11 +44,6 @@ const char* geometricObjects[] = {
 	  "rose4leafrevolutionsolid"
 };
 
-GeoObject::GeoObject() {
-	noiseLevel = 0;
-	shift = false;
-}
-
 // add noise to the geometric object's density and shift the location of the geometric object
 void GeoObject::addNoiseShift()
 {
