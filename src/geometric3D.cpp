@@ -1151,6 +1151,7 @@ void GeoObject::createGeometricReferences()
 					sum += int(density[plane][row][col]);
 				}
 				if (sum > 0) {
+					rowFirst = row;
 					break;
 				}
 			}
