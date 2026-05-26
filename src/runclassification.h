@@ -49,8 +49,6 @@ class Geometric
 	int totalCount;    // total test samples
 	int totalCorrect; // total correct classification
 	char density[PlaneMass::planeDim][PlaneMass::planeDim][PlaneMass::planeDim]; // geometric object 3D densities
-	double pcError[Stats::nclasses];      // classification percent error
-	Results testResults[Stats::nclasses]; // tabulated statistics of testing
 
 	double searchPlaneReferences(int cl, int axis, int plane, int refMassPlane);
 	double getPlaneMassError(int cls, int axis, int plane);
@@ -67,7 +65,6 @@ public:
 	static const int nplanes2 = nplanes / 2; // number of planes in each row
 	static const int axisDim = 100;                        // number of cells in each axis in y direction
 	static const double deg2rad; // convert degrees to radians
-	static const int classes = 19; // number of classes or geometric objects
 
 	Geometric();
 	~Geometric() = default;

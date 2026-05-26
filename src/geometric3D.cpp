@@ -16,7 +16,7 @@
 
 // static constant members
 const std::string GeoObject::geometricobject  = "geometricobject.txt"; // 3D geometric object file containing the densities, 50x50x50
-const std::string GeoObject::dataDir = "../data/"; // directory for object references dimensions and masses
+const std::string GeoObject::dataDir = "..\\data\\"; // directory for object references dimensions and masses
 const std::string GeoObject::geometricrefdims = "geometricrefdim.txt"; // row/column dimensions of references
 const double GeoObject::pi = 3.14159265358979;
 
@@ -229,8 +229,8 @@ void GeoObject::createCardioidRevolutionSolid()
 	for (int i = a; i > 0; i--) {
 		// loop over theta, 0<=theta<180
 		double theta = 0.0;
-		for (int i =0; i < 180; i++) {
-			for (int n = 0; i < nrsteps; n++) {
+		for (int j = 0; j < 180; j++) {
+			for (int n = 0; n < nrsteps; n++) {
 				// calculate r
 				double k = double(i) - double(n)*rstep;
 				double r = double(k) * (1.0 - std::cos(theta));
@@ -241,7 +241,7 @@ void GeoObject::createCardioidRevolutionSolid()
 				double h = r * std::sin(theta);
 				double phi = 0.0;
 				// loop over phi, 0<=phi<180
-				for (int i =0; i <  180; i++) {
+				for (int m = 0; m < 180; m++) {
 					// z=h*sin(phi), for (+/-) phi
 					double z = h * std::sin(phi);
 					double y = h * std::cos(phi);
@@ -254,6 +254,7 @@ void GeoObject::createCardioidRevolutionSolid()
 					density[y1+int(y)][z1+int(z)][int(xplus)+shiftx] = density2;
 					density[y1+int(y)][z1+int(-z)][int(xminus)+shiftx] = density2;
 					density[y1+int(y)][z1+int(-z)][int(xplus)+shiftx] = density2;
+					phi += del;
 				}
 			}
 			theta += del;
@@ -266,7 +267,6 @@ void GeoObject::createCardioidRevolutionSolid()
 		// find maximum shift and choose random value in that range
 		addNoiseShift();
 	}
-
 }
 
 // lemniscate of revolution, surface
@@ -292,7 +292,7 @@ void GeoObject::createLemniscateRevolution()
 		double h = r * std::sin(theta);
 		double phi = 0.0;
 		// loop over phi, 0<=phi<90
-		for (int i = 0; i < 180; i ++ ) {
+		for (int j = 0; j < 180; j++ ) {
 			// z=h*sin(phi), for (+/-) phi
 			// y=h*cos(phi), for (+/-) phi
 			double z = h * std::sin(phi);
@@ -343,7 +343,7 @@ void GeoObject::createLemniscateRevolutionSolid()
 	for (int i = a; i > 0; i--) {
 		// loop over theta, 0<=theta<45, and use symmetry to find other values
 		double theta = 0.0;
-		for (int i = 0; i < 45; i++) {
+		for (int j = 0; j < 45; j++) {
 			for (int n = 0; n < nrsteps; n++) {
 				// calculate r
 				double k = double(i) - double(n)*rstep;
@@ -354,7 +354,7 @@ void GeoObject::createLemniscateRevolutionSolid()
 				double h = r * std::sin(theta);
 				double phi = 0.0;
 				// loop over phi, 0<=phi<90
-				for (int i = 0; i < 90; i++) {
+				for (int m = 0; m < 90; m++) {
 					// z=h*sin(phi), for (+/-) phi
 					// y=h*cos(phi), for (+/-) phi
 					double z = h * std::sin(phi);
@@ -409,7 +409,7 @@ void GeoObject::createRose4LeafRevolution()
 		double h = r * std::sin(theta);
 		double phi = 0.0;
 		// loop over phi, 0<=phi<180
-		for (int i = 0; i < 180;i++) {
+		for (int j = 0; j < 180; j++) {
 			// z=h*sin(phi), for (+/-) phi
 			// y=h*cos(phi), for (+/-) phi
 			double z = h * std::sin(phi);
@@ -452,7 +452,7 @@ void GeoObject::createRose4LeafRevolutionSolid()
 	for (int i = a; i >= 0; i--) {
 		// loop over theta, 0<=theta<90, and use symmetry to find other values
 		double theta = 0.0;
-		for (int i = 0; i < 90; i++) {
+		for (int j = 0; j < 90; j++) {
 			for (int n = 0; n < nrsteps; n++) {
 				double k = double(i) - double(n)*rstep;
 				// calculate r
@@ -463,7 +463,7 @@ void GeoObject::createRose4LeafRevolutionSolid()
 				double h = r * std::sin(theta);
 				double phi = 0.0;
 				// loop over phi, 0<=phi<180
-				for (int i = 0; i < 180; i++) {
+				for (int m = 0; m < 180; m++) {
 					// z=h*sin(phi), for (+/-) phi
 					// y=h*cos(phi), for (+/-) phi
 					double z = h * std::sin(phi);
@@ -1091,16 +1091,15 @@ void GeoObject::createGeometricReferences()
 		&GeoObject::createLemniscateRevolutionSolid,
 		&GeoObject::createRose4LeafRevolution,
 		&GeoObject::createRose4LeafRevolutionSolid,
-		&GeoObject::createGeometricReferences
 	};
 
 	// create geometric object reference dimension file
 	std::fstream fdim;
 	fdim.open((GeoObject::dataDir + geometricrefdims).c_str(), std::fstream::out);
 	if (!fdim.is_open()) {
-			std::cout << "createGeometricReferences: cannot open " << geometricrefdims << std::endl;
+			std::cout << "createGeometricReferences: cannot open " << GeoObject::dataDir + geometricrefdims << std::endl;
 			fdim.close();
-			throw std::runtime_error("createGeometricReferences:  cannot open " + geometricrefdims);
+			throw std::runtime_error("createGeometricReferences:  cannot open " + GeoObject::dataDir + geometricrefdims);
 	}
 
 	// loop over classes

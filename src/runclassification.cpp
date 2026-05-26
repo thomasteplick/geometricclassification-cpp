@@ -5,8 +5,8 @@
 // Copyright   : ThomasTeplick
 // Description : GeometricClassification in C++, Ansi-style
 
-// Test the display by defining macro TEST_DISPLAY in Project, Properties, C/C++ General,
-// Preprocessor Include Paths, macros, etc., GNU C++, CDT User Defined Entries,
+// Test the display by defining macro TEST_DISPLAY in Project, Properties, C/C++ Build,
+// Settings, GCC C++ Compiler, Preprocessor
 // Add, Preprocessor Macro, TEST_DISPLAY.
 
 // Developed using Eclipse 2025-12, GCC C++ compiler, mingw C++ linker.
@@ -29,7 +29,7 @@
 const std::string Geometric::addr = "127.0.0.1:8080";   // http server listen address
 const std::string Geometric::geometricobject = "geometricobject.txt"; // 3D geometric object file containing the densities, 50x50x50
 const std::string Geometric::geometricrefdims = "geometricrefdim.txt";  // dimension of references
-const std::string Geometric::dataDir = "../data/";  // directory for geometric objects
+const std::string Geometric::dataDir = "..\\data\\";  // directory for geometric objects
 const double Geometric::deg2rad = 3.14159265358979 / 180.0; // convert degrees to radians
 
 extern const char *geometricObjects[];
@@ -363,8 +363,8 @@ Geometric::Geometric()
 	// get number of samples (10-100), noise level (0-9), and shift (true|false)
 
 	std::cout << "Enter the number of samples, noise level, and shift, separated by space" << std::endl;
-	std::cout << "10<=[samples]<= 100, 0<=[noise level]<= 9, [true|false]" << std::endl;
-	std::cout << "For example, '50 3 true'" << std::endl;
+	std::cout << "50<=[samples]<= 500, 0<=[noise level]<= 9, [0=false|1=true]" << std::endl;
+	std::cout << "For example, '50 3 1'" << std::endl;
 
 	int nl;
 	int ns;
@@ -373,13 +373,13 @@ Geometric::Geometric()
     std::cin >> ns >> nl >> sh;
     std::cout << "You entered: " << ns << " " << nl << " " << sh << std::endl;
     // verify values of parameters
-    if ((ns < 50) | (ns > 500)) {
+    if ((ns < 50) || (ns > 500)) {
     	response += "number samples,";
     }
-    if ((nl < 0) | (nl > 9)) {
+    if ((nl < 0) || (nl > 9)) {
     	response += "noise level,";
     }
-    if ((sh != true) | (sh != false)) {
+    if ((sh != false) && (sh != true)) {
     	response += "shift";
     }
     if (response.size() > 0) {
@@ -416,8 +416,8 @@ Geometric::Geometric()
 	// plane49 nrows,ncols
 	int nrows = 0;
 	int ncols = 0;
-	for (int i = 0; i < PlaneMass::planeDim; i++) {
-		for (int j = 0; j < PlaneMass::planeDim; j++) {
+	for (int i = 0; i < Stats::nclasses; i++) {
+		for (int j = 0; j < naxes; j++) {
 			for (int k = 0; k < PlaneMass::planeDim; k++) {
 				fdim >> nrows >> ncols;
 				geoRefDims[i][j][k] = PlaneDim{nrows: nrows, ncols: ncols};
@@ -441,7 +441,7 @@ void Geometric::classifyGeometric()
 		// class with min sq error
 		int minClass = 0;
 		// generate a random geometric object with noise level and shift using geoRefDims
-		int ngeometricObj = std::rand()%(classes);
+		int ngeometricObj = std::rand()%(Stats::nclasses);
 
 		geobj.CreateObject(ngeometricObj, noiseLevel, shift);
 
@@ -521,18 +521,10 @@ void Geometric::tabulateTestResults()
 		totalCount += statistics.classCount[i];
 		totalCorrect += statistics.correct[i];
 		if (statistics.classCount[i] > 0) {
-			testResults[i] = Results{
-				i,
-				geometricObjects[i],
-				statistics.classCount[i],
-				statistics.correct[i] * 100 / statistics.classCount[i]};
+			statistics.correct[i] =
+				statistics.correct[i] * 100 / statistics.classCount[i];
 		} else {
-			// leave correct% blank
-			testResults[i] = Results{
-				i,
-				geometricObjects[i],
-				statistics.classCount[i],
-			};
+			statistics.correct[i] = 0;
 		}
 	}
 }
@@ -552,31 +544,32 @@ void Geometric::displayTestResults()
     |Totals |                          |100    |100        |
     |======================================================|
 	*/
-	const int w1 = 8;
-	const int w2 = 28;
+	const int w1 = 7;
+	const int w2 = 26;
+	const int w3 = 11;
 	std::cout << std::endl;
 	std::cout << "|======================================================|" << std::endl;
 	std::cout << "|Class  |Geometric                 |Count  |Correct (%)|" << std::endl;
 	std::cout << "|=======|==========================|=======|===========|" << std::endl;
 	for (int cls = 0; cls < Stats::nclasses; cls++) { std::cout
-				<< std::setw(w1) << std::ios_base::left << cls << '|'
-				<< std::setw(w2) << std::ios_base::left << geometricObjects[cls] << '|'
-				<< std::setw(w1) << std::ios_base::left << statistics.classCount[cls] << '|'
-				<< std::setw(w1) << std::ios_base::left << statistics.correct[cls] << '|'
-				<< std::endl;
+				<< '|' << std::setw(w1) << std::left << cls
+				<< '|' << std::setw(w2) << std::left << geometricObjects[cls]
+				<< '|' << std::setw(w1) << std::left << statistics.classCount[cls]
+				<< '|' << std::setw(w3) << std::left << statistics.correct[cls]  << '|' << std::endl;
 	}
 	std::cout << "|------------------------------------------------------|" << std::endl;
-	std::cout << '|' << std::setw(w1) << std::ios_base::left << "Totals" << '|'
-			  << std::setw(w2) << std::ios_base::left << "" << '|'
-			  << std::setw(w1) << std::ios_base::left << totalCount << '|'
-			  << std::setw(w1) << std::ios_base::left << totalCorrect * 100 / totalCount << '|'
-			  << std::endl;
+	std::cout << '|' << std::setw(w1) << std::left << "Totals" << '|'
+			<< std::setw(w2) << std::left << "" << '|'
+			<< std::setw(w1) << std::left << totalCount << '|'
+			<< std::setw(w3) << std::left << totalCorrect * 100 / totalCount << '|' << std::endl;
 	std::cout << "|======================================================|" << std::endl;
 	std::cout << std::endl;
 }
 
 void handleGeometricClassification()
 {
+	std::cout << "---------- Geometric Classification Running ----------" << std::endl;
+
 	// initialize random number generator
 	std::srand(std::time(0));
 
@@ -613,7 +606,10 @@ void handleGeometricClassification()
 // test the console display of geometric classification
 void test_display()
 {
-    // Create Geometric
+
+	std::cout << "---------- Display Test Running ----------" << std::endl;
+
+	// Create Geometric
     Geometric geo;
 
     double mean = double(geo.nsamples)/double(Stats::nclasses);
@@ -622,17 +618,16 @@ void test_display()
     double k2 = .95;
     int count = 0;
 
-	std::cout << "Testing Display" << std::endl;
 	// fill in statistics
 	for (int i = 0; i < Stats::nclasses-1; i++) {
-		Geometric::statistics.classCount[i] = int(mean*(1.0 + sign*k1));
-		Geometric::statistics.correct[i] = int(k2*Geometric::statistics.classCount[i]);
+		geo.statistics.classCount[i] = int(mean*(1.0 + sign*k1));
+		geo.statistics.correct[i] = int(k2*geo.statistics.classCount[i]);
 		sign *= -1.0;
-		count += Geometric::statistics.classCount[i];
+		count += geo.statistics.classCount[i];
 	}
-	Geometric::statistics.classCount[Stats::nclasses-1] = geo.nsamples - count;
-	Geometric::statistics.correct[Stats::nclasses-1] =
-			int(k2*Geometric::statistics.classCount[Stats::nclasses-1]);
+	geo.statistics.classCount[Stats::nclasses-1] = geo.nsamples - count;
+	geo.statistics.correct[Stats::nclasses-1] =
+			int(k2*geo.statistics.classCount[Stats::nclasses-1]);
 
 	// tabulate
 	geo.tabulateTestResults();
