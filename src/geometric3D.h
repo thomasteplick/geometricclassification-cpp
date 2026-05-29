@@ -46,7 +46,7 @@ public:
     static const std::string dataDir;
     static const std::string geometricrefdims;
 
-    GeoObject() : noiseLevel{0}, shift{false}{}
+    GeoObject() : noiseLevel{0}, shift{false}{};
     ~GeoObject() = default;
     GeoObject(const GeoObject& geoObj) = delete;
     GeoObject& operator=(const GeoObject& geoObj) = delete;
@@ -56,7 +56,7 @@ public:
     void CreateObject(int geometricObject, int noiseLevel, bool shift);
 
 private:
-	char density[planeDim][planeDim][planeDim];
+	int density[planeDim][planeDim][planeDim];
 
 };
 

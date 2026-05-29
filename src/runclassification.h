@@ -48,7 +48,7 @@ class Geometric
 	Stats statistics;
 	int totalCount;    // total test samples
 	int totalCorrect; // total correct classification
-	char density[PlaneMass::planeDim][PlaneMass::planeDim][PlaneMass::planeDim]; // geometric object 3D densities
+	int density[PlaneMass::planeDim][PlaneMass::planeDim][PlaneMass::planeDim]; // geometric object 3D densities
 
 	double searchPlaneReferences(int cl, int axis, int plane, int refMassPlane);
 	double getPlaneMassError(int cls, int axis, int plane);

@@ -1422,7 +1422,7 @@ void GeoObject::createGeometricReferences()
 				sum = 0;
 				for (int row = 0; row < planeDim; row++) {
 					// sum each col density and write to file geometricrefmass on the same line with a space between
-					sum += int(density[plane][row][col]);
+					sum += int(density[row][col][plane]);
 				}
 				fclass << sum << " ";
 			}
@@ -1438,26 +1438,34 @@ void GeoObject::createGeometricReferences()
 // create a geometric 3D object using its densities
 void GeoObject::CreateObject(int geometricObject, int noiseLevel, bool shift)
 {
+	// initialize the density to zero
+	for(auto &dim1 : density) {
+		for (auto &dim2 : dim1) {
+			for (auto &dim3 : dim2) {
+				dim3 = 0;
+			}
+		}
+	}
 
 	// determine the geometric surface/solid
 	switch (geometricObject) {
 	case 0:
-		createPlane();
-		break;
-	case 1:
-		createCube();
-		break;
-	case 2:
 		createEllipsoid();
 		break;
-	case 3:
+	case 1:
 		createEllipsoidSolid();
 		break;
-	case 4:
+	case 2:
+		createPlane();
+		break;
+	case 3:
 		createParaboloid();
 		break;
-	case 5:
+	case 4:
 		createParaboloidSolid();
+		break;
+	case 5:
+		createCube();
 		break;
 	case 6:
 		createCone();
@@ -1517,7 +1525,7 @@ void GeoObject::CreateObject(int geometricObject, int noiseLevel, bool shift)
 
 	for (const auto &dim1 : density) {
 		for (const auto &dim2 : dim1) {
-			for (const auto &dim3 : dim2) {
+			for (int dim3 : dim2) {
 				fgeo << dim3 << " ";
 			}
 			fgeo << std::endl;

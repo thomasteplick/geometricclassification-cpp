@@ -9,7 +9,7 @@
 // Settings, GCC C++ Compiler, Preprocessor
 // Add, Preprocessor Macro, TEST_DISPLAY.
 
-// Developed using Eclipse 2025-12, GCC C++ compiler, mingw C++ linker.
+// Developed using Eclipse C/C++ IDE 2025-12, GCC C++ compiler, mingw C++ linker.
 //============================================================================
 
 #include <iostream>
@@ -55,7 +55,7 @@ double Geometric::searchPlaneReferences(int cls, int axis, int plane, int refMas
 	// get the bounds (number of rows and columns) for this refMass plane
 	int nrows = geoRefDims[cls][axis][refMassPlane].nrows;
 	int ncols = geoRefDims[cls][axis][refMassPlane].ncols;
-	int rowShifts = PlaneMass::PlaneMass::planeDim - nrows;
+	int rowShifts = PlaneMass::planeDim - nrows;
 	int colShifts = PlaneMass::planeDim - ncols;
 
 	const int nsections = 4;
@@ -68,18 +68,18 @@ double Geometric::searchPlaneReferences(int cls, int axis, int plane, int refMas
 	case 0:
 		// if no reference plane mass, then error is the square of the row and col sums
 		if (nrows == 0) {
-			int minSqErr = 0;
+			minSqErr = 0;
 			for (int k = 0; k < rowShifts; k++) {
 				for (int m = 0; m < colShifts; m++) {
-					minSqErr += int(density[plane][k][m] * density[plane][k][m]);
+					minSqErr += double(density[plane][k][m] * density[plane][k][m]);
 				}
 			}
 			for (int m = 0; m < colShifts; m++) {
 				for (int k = 0; k < rowShifts; k++) {
-					minSqErr += int(density[plane][k][m] * density[plane][k][m]);
+					minSqErr += double(density[plane][k][m] * density[plane][k][m]);
 				}
 			}
-			return double(minSqErr);
+			return minSqErr;
 		}
 
 		// We have reference plane mass
@@ -153,18 +153,18 @@ double Geometric::searchPlaneReferences(int cls, int axis, int plane, int refMas
 	case 1:
 		// if no reference plane mass, then error is the square of the row and col sums
 		if (nrows == 0) {
-			int minSqErr = 0;
+			minSqErr = 0;
 			for (int k = 0; k < rowShifts; k++) {
 				for (int m = 0; m < colShifts; m++) {
-					minSqErr += int(density[k][plane][m] * density[k][plane][m]);
+					minSqErr += double(density[k][plane][m] * density[k][plane][m]);
 				}
 			}
 			for (int m = 0; m < colShifts; m++) {
 				for (int k = 0; k < rowShifts; k++) {
-					minSqErr += int(density[k][plane][m] * density[k][plane][m]);
+					minSqErr += double(density[k][plane][m] * density[k][plane][m]);
 				}
 			}
-			return double(minSqErr);
+			return minSqErr;
 		}
 
 		// We have reference plane mass
@@ -238,18 +238,18 @@ double Geometric::searchPlaneReferences(int cls, int axis, int plane, int refMas
 	case 2:
 		// if no reference plane mass, then error is the square of the row and col sums
 		if (nrows == 0) {
-			int minSqErr = 0;
+			minSqErr = 0;
 			for (int k = 0; k < rowShifts; k++) {
 				for (int m = 0; m < colShifts; m++) {
-					minSqErr += int(density[k][m][plane] * density[k][m][plane]);
+					minSqErr += double(density[k][m][plane] * density[k][m][plane]);
 				}
 			}
 			for (int m = 0; m < colShifts; m++) {
 				for (int k = 0; k < rowShifts; k++) {
-					minSqErr += int(density[k][m][plane] * density[k][m][plane]);
+					minSqErr += double(density[k][m][plane] * density[k][m][plane]);
 				}
 			}
-			return double(minSqErr);
+			return minSqErr;
 		}
 
 		// We have reference plane mass
@@ -321,7 +321,7 @@ double Geometric::searchPlaneReferences(int cls, int axis, int plane, int refMas
 				}
 			}
 		}
-		return double(minSqErr);
+		return minSqErr;
 	default:
 		throw std::runtime_error("searchPlaneReferences: error invalid axis chosen");
     }
@@ -335,19 +335,21 @@ double Geometric::getPlaneMassError(int cls, int axis, int plane)
 		to find minimum square error.
 	*/
 	double minSqErr = std::numeric_limits<double>::max();
+
 	for (int refMassPlane = 0; refMassPlane < PlaneMass::planeDim; refMassPlane++) {
 		double sqErr = searchPlaneReferences(cls, axis, plane, refMassPlane);
 		if (sqErr < minSqErr) {
 			minSqErr = sqErr;
 		}
 	}
+
 	return minSqErr;
 }
 
-// compute min square error for all planes in this axis and return via channel
+// compute min square error for all planes in this axis and return
 double Geometric::getAxisMassError(int cls, int axis)
 {
-	double minSqErr = std::numeric_limits<double>::max();
+	double minSqErr = 0.0;
 	// loop over planes and get plane mass errors
 	// sum the plane square errors
 	for (int plane = 0; plane < PlaneMass::planeDim; plane++) {
@@ -434,6 +436,8 @@ void Geometric::classifyGeometric()
     // Create Geometric Object
     GeoObject geobj;
 
+    std::cout << "classifyGeometric, start loop over the samples\n";
+
 	// loop over the number of samples
 	for (int sample = 0; sample < nsamples; sample++) {
 		// min sq mass error
@@ -442,6 +446,8 @@ void Geometric::classifyGeometric()
 		int minClass = 0;
 		// generate a random geometric object with noise level and shift using geoRefDims
 		int ngeometricObj = std::rand()%(Stats::nclasses);
+
+		std::cout << "\nsample " << sample << ", ngeometricObj = " << ngeometricObj <<std::endl;
 
 		geobj.CreateObject(ngeometricObj, noiseLevel, shift);
 
@@ -463,6 +469,7 @@ void Geometric::classifyGeometric()
 		}
 		fgeometric.close();
 
+		std::cout << "loop over geometric reference\n";
 		// loop over geometric references and open one at a time
 		for (int cls = 0; cls < Stats::nclasses; cls++) {
 			// read geometric reference mass sums into memory for this class reference only
@@ -489,8 +496,6 @@ void Geometric::classifyGeometric()
 			fgeoref.close();
 
 			// find minimum mass error over rowsums and colsums for all axes and planes
-			// launch goroutines for each axis and each plane :  3*50 goroutines
-			// use channel communication between goroutines
 			// use geoRefDims for shifting the object inside the planes
 			double sqerr = 0.0;
 			for (int axes = 0; axes < naxes; axes++) {
@@ -509,6 +514,7 @@ void Geometric::classifyGeometric()
 			statistics.correct[ngeometricObj]++;
 		}
 	}
+	std::cout << "leaving classifyGeometric\n";
 }
 
 // insert test results into table for display
@@ -587,12 +593,16 @@ void handleGeometricClassification()
     // Create Geometric
     Geometric geo;
 
+    std::cout << "Geometric geo constructed, start classifyGeometric\n";
+
 	// classify the geometric object samples
     geo.classifyGeometric();
 
+    std::cout << "tabulateTestResults\n";
 	// tabulate the classification test results
     geo.tabulateTestResults();
 
+    std::cout << "displayTestResults\n";
 	// display the test results in tabular form
     geo.displayTestResults();
 
