@@ -440,14 +440,13 @@ void Geometric::classifyGeometric()
 
 	// loop over the number of samples
 	for (int sample = 0; sample < nsamples; sample++) {
+		std::cout << "sample " << sample << std::endl;
 		// min sq mass error
 		double minSqError = std::numeric_limits<double>::max();
 		// class with min sq error
 		int minClass = 0;
 		// generate a random geometric object with noise level and shift using geoRefDims
 		int ngeometricObj = std::rand()%(Stats::nclasses);
-
-		std::cout << "\nsample " << sample << ", ngeometricObj = " << ngeometricObj <<std::endl;
 
 		geobj.CreateObject(ngeometricObj, noiseLevel, shift);
 
@@ -469,7 +468,6 @@ void Geometric::classifyGeometric()
 		}
 		fgeometric.close();
 
-		std::cout << "loop over geometric reference\n";
 		// loop over geometric references and open one at a time
 		for (int cls = 0; cls < Stats::nclasses; cls++) {
 			// read geometric reference mass sums into memory for this class reference only
