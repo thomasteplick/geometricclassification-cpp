@@ -438,9 +438,14 @@ void Geometric::classifyGeometric()
 
     std::cout << "classifyGeometric, start loop over the samples\n";
 
+    const int newLine = 50;
 	// loop over the number of samples
 	for (int sample = 0; sample < nsamples; sample++) {
-		std::cout << "sample " << sample << std::endl;
+		// newline every newLine samples
+		if (sample%newLine == 0) {
+			std::cout << std::endl;
+		}
+		std::cout << "*";
 		// min sq mass error
 		double minSqError = std::numeric_limits<double>::max();
 		// class with min sq error
