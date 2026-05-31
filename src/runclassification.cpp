@@ -517,7 +517,7 @@ void Geometric::classifyGeometric()
 			statistics.correct[ngeometricObj]++;
 		}
 	}
-	std::cout << "leaving classifyGeometric\n";
+	std::cout << "\n\nleaving classifyGeometric\n";
 }
 
 // insert test results into table for display
