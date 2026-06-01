@@ -33,6 +33,57 @@ can obtain a quantity proportional to mass.	Thus the row sums and columns sums
 distinguish different geometric objects and can be used to classify the object.
 </p>
 
+<h4>Classification of 100 samples, level 0 noise, 19 geometric objects</h4>
+
+<pre>
+C:\Users\Thoma\eclipse-workspace\GeometricClassification\Debug>GeometricClassification.exe
+---------- Geometric Classification Running ----------
+Start local time and date: Sat May 30 10:39:12 2026
+
+Enter the number of samples, noise level, and shift, separated by space
+50<=[samples]<= 500, 0<=[noise level]<= 9, [0=false|1=true]
+For example, '50 3 1'
+100 0 0
+You entered: 100 0 0
+Geometric geo constructed, start classifyGeometric
+classifyGeometric, start loop over the samples
+
+**************************************************
+**************************************************
+
+leaving classifyGeometric
+tabulateTestResults
+displayTestResults
+
+|======================================================|
+|Class  |Geometric                 |Count  |Correct (%)|
+|=======|==========================|=======|===========|
+|0      |ellipsoidsurface          |5      |100        |
+|1      |ellipsoidsolid            |1      |100        |
+|2      |plane                     |5      |100        |
+|3      |paraboloid                |9      |100        |
+|4      |paraboloidsolid           |7      |100        |
+|5      |cube                      |2      |100        |
+|6      |cone                      |5      |100        |
+|7      |conesolid                 |4      |100        |
+|8      |box                       |10     |100        |
+|9      |hyperbolicparaboloid      |3      |100        |
+|10     |cylindersurface           |8      |100        |
+|11     |cylindersolid             |7      |100        |
+|12     |potentialwell             |8      |100        |
+|13     |cardioidrevolution        |3      |100        |
+|14     |cardioidrevolutionsolid   |3      |100        |
+|15     |lemniscaterevolution      |2      |100        |
+|16     |lemniscaterevolutionsolid |4      |100        |
+|17     |rose4leafrevolution       |5      |100        |
+|18     |rose4leafrevolutionsolid  |9      |100        |
+|------------------------------------------------------|
+|Totals |                          |100    |100        |
+|======================================================|
+
+Finish local time and date: Sun May 31 00:06:26 2026  
+</pre>
+
 <h4>Classification of 100 samples, level 3 noise, 19 geometric objects.</h4>
 
 <pre>
