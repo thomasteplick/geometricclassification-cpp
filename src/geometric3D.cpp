@@ -47,14 +47,14 @@ const char* geometricObjects[] = {
 // add noise to the geometric object's density and shift the location of the geometric object
 void GeoObject::addNoiseShift()
 {
-	// Save geo.density to a temp file
+	// Save geo.density to a temp file, first open for writing
 	const std::string tempfile = "tempdensity.txt";
 	std::fstream fstrm;
-	fstrm.open((GeoObject::dataDir + tempfile).c_str(), std::fstream::in | std::fstream::out);
+	fstrm.open((GeoObject::dataDir + tempfile).c_str(), std::fstream::out);
 	if (!fstrm.is_open()) {
-			std::cout << "addNoiseShift: cannot open " << tempfile << std::endl;
+			std::cout << "addNoiseShift: cannot open for writing" << tempfile << std::endl;
 			fstrm.close();
-			throw std::runtime_error("addNoiseShift:  cannot open " + tempfile);
+			throw std::runtime_error("addNoiseShift: cannot open for writing" + tempfile);
 	}
 
 	// space-separated densities written to file
@@ -67,8 +67,16 @@ void GeoObject::addNoiseShift()
 		}
 	}
 
-	// Rewind temp density file
-	fstrm.seekg(0, fstrm.beg);
+	// close temp density file
+	fstrm.close();
+
+	// now open the temp density file for reading
+	fstrm.open((GeoObject::dataDir + tempfile).c_str(), std::fstream::in);
+	if (!fstrm.is_open()) {
+			std::cout << "addNoiseShift: cannot open for reading " << tempfile << std::endl;
+			fstrm.close();
+			throw std::runtime_error("addNoiseShift:  cannot open for reading " + tempfile);
+	}
 
 	// Clear density
 	for (auto &dim1 : density) {
@@ -1436,7 +1444,7 @@ void GeoObject::createGeometricReferences()
 }
 
 // create a geometric 3D object using its densities
-void GeoObject::CreateObject(int geometricObject, int noiseLevel, bool shift)
+void GeoObject::CreateObject(int geometricObject, int nl, bool sh)
 {
 	// initialize the density to zero
 	for(auto &dim1 : density) {
@@ -1446,6 +1454,10 @@ void GeoObject::CreateObject(int geometricObject, int noiseLevel, bool shift)
 			}
 		}
 	}
+
+	// Assign the noise level and shift to the geometric object
+	noiseLevel = nl;
+	shift = sh;
 
 	// determine the geometric surface/solid
 	switch (geometricObject) {
