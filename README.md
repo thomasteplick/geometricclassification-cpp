@@ -188,11 +188,11 @@ displayTestResults
 Finish local time and date: Mon Jun 01 23:59:35 2026 
 </pre>
 
-<h4>Display Geometric </h4>
+<h4>Display Geometric, rose4leafrevolutionsolid</h4>
 <pre>
 Choose Classify Geometric = 1 or Display Geometric = 2:  2
 </pre>
 <img width="1069" height="1024" alt="image" src="https://github.com/user-attachments/assets/8b43c6b3-e1df-4bf5-9c20-947203764ee2" />
-<h4>Display Geometric</h4>
+<h4>Display Geometric, cardioidrevolutionsolid</h4>
 <img width="1074" height="1019" alt="image" src="https://github.com/user-attachments/assets/50b87977-aa6d-45ae-a718-dc7b8e507c9b" />
 
