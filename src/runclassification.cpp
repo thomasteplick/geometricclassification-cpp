@@ -9,7 +9,7 @@
 // Settings, GCC C++ Compiler, Preprocessor
 // Add, Preprocessor Macro, TEST_DISPLAY.
 
-// Developed using Eclipse C/C++ IDE 2025-12, GCC C++ compiler, mingw C++ linker.
+// Developed using Eclipse C/C++ IDE 2025-06, GCC C++ compiler, mingw C++ linker.
 //============================================================================
 
 #include <iostream>
@@ -24,6 +24,7 @@
 #include <ios>
 #include "geometric3D.h"
 #include "runclassification.h"
+#include "displaygeometric.h"
 
 // static constant members
 const std::string Geometric::addr = "127.0.0.1:8080";   // http server listen address
@@ -370,7 +371,7 @@ Geometric::Geometric()
 
 	int nl;
 	int ns;
-	bool sh;
+	int sh;
 	std::string response = "";
     std::cin >> ns >> nl >> sh;
     std::cout << "You entered: " << ns << " " << nl << " " << sh << std::endl;
@@ -381,15 +382,15 @@ Geometric::Geometric()
     if ((nl < 0) || (nl > 9)) {
     	response += "noise level,";
     }
-    if ((sh != false) && (sh != true)) {
+    if ((sh != 0) && (sh != 1)) {
     	response += "shift";
     }
     if (response.size() > 0) {
-    	throw std::runtime_error("inputs outside of ranges: " + response);
+    	throw std::runtime_error("geometric classification inputs outside of ranges: " + response);
     }
     noiseLevel = nl;
     nsamples = ns;
-    shift = sh;
+    shift = bool(sh);
     totalCorrect = 0;
     totalCount = 0;
 
@@ -575,6 +576,18 @@ void Geometric::displayTestResults()
 	std::cout << std::endl;
 }
 
+void handleGeometricDisplay()
+{
+	std::cout << "---------- Geometric Display Running ----------" << std::endl;
+
+	// Create geometric display instance using class, axis, start plane, stop plane
+	// Get choices in a loop to allow for continuous evaluation
+	GeoDisplay geo;
+
+	// Display the geometric object
+	geo.displayClass();
+}
+
 void handleGeometricClassification()
 {
 	std::cout << "---------- Geometric Classification Running ----------" << std::endl;
@@ -658,7 +671,24 @@ int main()
 #ifdef TEST_DISPLAY
 		test_display();
 #else
-	    handleGeometricClassification();
+		int choice = 0;
+		// select classify or display geometric objects
+		std::cout << "Choose Classify Geometric = 1 or Display Geometric = 2:  ";
+		std::cin >> choice;
+		if ((choice != 1) && (choice != 2)) {
+			std::cout << "choose 1 or 2, you entered " << choice << std::endl;
+			throw std::runtime_error("choose 1 for Classify, choose 2 for Display");
+		}
+		switch (choice) {
+		case 1:
+			handleGeometricClassification();
+			break;
+		case 2:
+			handleGeometricDisplay();
+			break;
+		default:
+			std::cout << "Classify = 1, Display = 2, unknown case " << choice << std::endl;
+		}
 #endif
 	}
 	catch(std::runtime_error &re) {
