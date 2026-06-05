@@ -2,7 +2,7 @@
 Classification of Three-dimensional Geometric Objects using C++
 </h3>
 <p>
-This program is written in C++11 and used Eclipse CDE 2025-12 IDE with GCC compiler. 
+This program is written in C++11 and used Eclipse CDE 2025-06 IDE with GCC compiler. 
 The program is single-threaded.  The geometric samples are processed in one for loop.
 Each axes and plane is also processed in a for loop.  No attempt was made to use C++ concurrency
 methods such as thread, mutex, or condition variable to take advantage of the multi-core processor.
@@ -13,13 +13,13 @@ Geometric Classification classifies the internal structure of 3D geometric objec
 such as ellipsoids, parabloids, cubes, boxes, planes, lemniscates, cardiods, four-leaf rose, or cones.
 It slices the geometric objects along axial planes in the Cartesian coordinate system.
 The object can be solids as well as surfaces.
-It gives an overview of the planes in i, j, k axes along with the option
-of zooming in on a particular axial plane.  It is possible to select and
-view particular planes in the geometric object with different step sizes.
+The program provides a display geometric option to display a particular class, axis, and range of planes.
+The planes are displayed at two-second intervals.  The densities are shown with their integer values
+and displayed in color in order to distinguish the varying densities.
 It will classify the geometric object and display the results.  It does this
 by comparing the noisy test samples that are displaced randomly in space with
 references of the geometric objects that are noise free and centered.  The metrics
-are mass sums of the rows and columns of plane in each axes in the Cartesian
+are mass sums of the rows and columns of the planes in each axes in the Cartesian
 coordinate system.  The least square error determines how the sample is classified.
 The difference between the reference class mass sums and the test sample is the error.
 </p>
@@ -32,12 +32,35 @@ can be any concentration quantity.  By summing up the row or column densities yo
 can obtain a quantity proportional to mass.	Thus the row sums and columns sums 
 distinguish different geometric objects and can be used to classify the object.
 </p>
-
+<p>
+  To display a particular geometric object, enter the class number, axis, the start
+  plane, and the stop plane.  The planes will be flashed at two-second intervals.
+  The density values are typed in color.  Here is a list of the geometric object
+  and their class number:
+  <ol>
+    <li>ellipsoidsurface</li>
+	  <li>ellipsoidsolid</li>
+	  <li>plane</li>
+	  <li>paraboloid</li>
+	  <li>paraboloidsolid</li>
+	  <li>cube</li>
+	  <li>cone</li>
+	  <li>conesolid</li>
+	  <li>box</li>
+	  <li>hyperbolicparaboloid</li>
+	  <li>cylindersurface</li>
+	  <li>cylindersolid</li>
+	  <li>potentialwell</li>
+	  <li>cardioidrevolution</li>
+	  <li>cardioidrevolutionsolid</li>
+	  <li>lemniscaterevolution</li>
+	  <li>lemniscaterevolutionsolid</li>
+	  <li>rose4leafrevolution</li>
+	  <li>rose4leafrevolutionsolid</li>
+  </ol>
 <h4>Classification of 100 samples, level 0 noise, 19 geometric objects</h4>
 
 <pre>
-C:\Users\Thoma\eclipse-workspace\GeometricClassification\Debug>GeometricClassification.exe
-Choose Classify Geometric = 1 or Display Geometric = 2: 1
 ---------- Geometric Classification Running ----------
 Start local time and date: Sat May 30 10:39:12 2026
 
@@ -188,11 +211,12 @@ displayTestResults
 Finish local time and date: Mon Jun 01 23:59:35 2026 
 </pre>
 
-<h4>Display Geometric, rose4leafrevolutionsolid</h4>
+<h4>Display Geometric, rose4leafrevolutionsolid, class 18, axis 0, plane 25</h4>
 <pre>
 Choose Classify Geometric = 1 or Display Geometric = 2:  2
 </pre>
 <img width="1069" height="1024" alt="image" src="https://github.com/user-attachments/assets/8b43c6b3-e1df-4bf5-9c20-947203764ee2" />
-<h4>Display Geometric, cardioidrevolutionsolid</h4>
+<h4>Display Geometric, cardioidrevolutionsolid, class 14, axis 1, plane 25</h4>
 <img width="1074" height="1019" alt="image" src="https://github.com/user-attachments/assets/50b87977-aa6d-45ae-a718-dc7b8e507c9b" />
-
+<h4>Display Geometric, cube, class 5, axis 0, plane 25</h4>
+<img width="995" height="1025" alt="image" src="https://github.com/user-attachments/assets/d178aa1d-b016-4980-873d-f0f821a1a3d9" />
