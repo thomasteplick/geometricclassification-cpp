@@ -6,6 +6,7 @@ This program is written in C++11 and used Eclipse CDE 2025-06 IDE with GCC compi
 The program is single-threaded.  The geometric samples are processed in one for loop.
 Each axes and plane is also processed in a for loop.  No attempt was made to use C++ concurrency
 methods such as thread, mutex, or condition variable to take advantage of the multi-core processor.
+That will be done in a follow-on program.
 </p>
 
 <p>
