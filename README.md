@@ -220,3 +220,6 @@ Choose Classify Geometric = 1 or Display Geometric = 2:  2
 <img width="1074" height="1019" alt="image" src="https://github.com/user-attachments/assets/50b87977-aa6d-45ae-a718-dc7b8e507c9b" />
 <h4>Display Geometric, cube, class 5, axis 0, plane 25</h4>
 <img width="995" height="1025" alt="image" src="https://github.com/user-attachments/assets/d178aa1d-b016-4980-873d-f0f821a1a3d9" />
+<h4>Display Geometric, ellipsoidsolid, class 1, axis 1, plane 25</h4>
+<img width="1036" height="1021" alt="image" src="https://github.com/user-attachments/assets/d6238c59-cf07-4f11-808c-6977bfb03cd6" />
+
