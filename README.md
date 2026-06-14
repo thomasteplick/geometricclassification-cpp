@@ -39,7 +39,7 @@ distinguish different geometric objects and can be used to classify the object.
   The density values are typed in color.  Here is a list of the geometric object
   and their class number:
   <ol>
-    <li>ellipsoidsurface</li>
+      <li>ellipsoidsurface</li>
 	  <li>ellipsoidsolid</li>
 	  <li>plane</li>
 	  <li>paraboloid</li>
@@ -59,7 +59,7 @@ distinguish different geometric objects and can be used to classify the object.
 	  <li>rose4leafrevolution</li>
 	  <li>rose4leafrevolutionsolid</li>
   </ol>
-  </p>
+</p>
 <h4>Classification of 100 samples, level 0 noise, 19 geometric objects</h4>
 
 <pre>
