@@ -59,6 +59,7 @@ distinguish different geometric objects and can be used to classify the object.
 	  <li>rose4leafrevolution</li>
 	  <li>rose4leafrevolutionsolid</li>
   </ol>
+  </p>
 <h4>Classification of 100 samples, level 0 noise, 19 geometric objects</h4>
 
 <pre>
